@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "113888301840",
+    "project_id": "mi-seguridad-uamx",
+    "storage_bucket": "mi-seguridad-uamx.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:113888301840:android:e0012543c95c1830a94b95",
+        "android_client_info": {
+          "package_name": "com.mycompany.miseguridaduamx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "113888301840-mkjoq7ugu2e23knf4qov0fpc59rl7hkn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.miseguridaduamx",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "113888301840-mbuiiprqc2o34otikqdji3oj73qjfiha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcwrcjkrzUeL5B-MXKqsP00ZXQdDHKuwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113888301840-mbuiiprqc2o34otikqdji3oj73qjfiha.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "113888301840-verk7gulurupuiopggoq8g9kv638ucgp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.miseguridaduamx"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
