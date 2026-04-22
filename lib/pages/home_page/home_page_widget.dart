@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'dart:io';
 import 'dart:ui';
 import '/custom_code/actions/index.dart' as actions;
 import '/index.dart';
@@ -26,12 +27,88 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<bool> _tieneConexion() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
+  void _mostrarAlertaSinConexion(BuildContext ctx) {
+    showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.wifi_off_rounded, color: Color(0xFFD32F2F), size: 28),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Sin conexión a Internet',
+                style: GoogleFonts.inter(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Para el correcto funcionamiento de esta aplicación es indispensable contar con una conexión a Internet activa. '
+          'Algunas funciones, como el envío de alertas de emergencia y la visualización de mapas, '
+          'requieren conectividad de red.\n\n'
+          'Por favor, verifique su conexión Wi-Fi o datos móviles antes de continuar.',
+          style: GoogleFonts.inter(fontSize: 14, color: Color(0xFF444444), height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              final conectado = await _tieneConexion();
+              if (!conectado && mounted) {
+                _mostrarAlertaSinConexion(context);
+              }
+            },
+            child: Text(
+              'Reintentar',
+              style: GoogleFonts.inter(
+                  color: Color(0xFF2370B6), fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF2370B6),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              'Continuar de todos modos',
+              style: GoogleFonts.inter(color: Colors.white, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      safeSetState(() {});
+      final conectado = await _tieneConexion();
+      if (!conectado && mounted) {
+        _mostrarAlertaSinConexion(context);
+      }
+    });
   }
 
   @override
@@ -41,8 +118,125 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     super.dispose();
   }
 
+  Widget _buildIconButton({
+    required BuildContext context,
+    required double containerSize,
+    required double imageSize,
+    required String assetPath,
+    required String label,
+    required BoxFit imageFit,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      width: containerSize,
+      height: containerSize + 24,
+      decoration: BoxDecoration(
+        color: FlutterFlowTheme.of(context).secondaryBackground,
+        shape: BoxShape.rectangle,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: onTap,
+            child: Container(
+              width: imageSize,
+              height: imageSize,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(shape: BoxShape.circle),
+              child: Image.asset(assetPath, fit: imageFit),
+            ),
+          ),
+          const SizedBox(height: 4),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    font: GoogleFonts.inter(
+                      fontWeight:
+                          FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                      fontStyle:
+                          FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                    ),
+                    fontSize: 12.0,
+                    letterSpacing: 0.0,
+                    fontWeight:
+                        FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                    fontStyle:
+                        FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAccessButton({
+    required BuildContext context,
+    required double imageSize,
+    required String assetPath,
+    required String label,
+    required BoxFit imageFit,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          splashColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: onTap,
+          child: Container(
+            width: imageSize,
+            height: imageSize,
+            clipBehavior: Clip.antiAlias,
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            child: Image.asset(assetPath, fit: imageFit),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                font: GoogleFonts.inter(
+                  fontWeight:
+                      FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                  fontStyle:
+                      FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                ),
+                fontSize: 11.0,
+                letterSpacing: 0.0,
+              ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final shortestSide = mediaQuery.size.shortestSide;
+
+    final iconContainerSize = (shortestSide * 0.22).clamp(85.0, 115.0);
+    final iconImageSize = iconContainerSize * 0.72;
+    final sosButtonSize = (shortestSide * 0.45).clamp(160.0, 220.0);
+    final horizontalPadding = (screenWidth * 0.04).clamp(12.0, 24.0);
+    final verticalPadding = (screenHeight * 0.015).clamp(8.0, 16.0);
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -50,16 +244,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFF5F7FA),
+        backgroundColor: const Color(0xFFF5F7FA),
         appBar: AppBar(
-          backgroundColor: Color(0xFF2370B6),
+          backgroundColor: const Color(0xFF2370B6),
           automaticallyImplyLeading: false,
           leading: Align(
-            alignment: AlignmentDirectional(0.47, -1.02),
+            alignment: const AlignmentDirectional(0.47, -1.02),
             child: FlutterFlowIconButton(
               borderRadius: 8.0,
               buttonSize: 48.0,
-              fillColor: Color(0xFF2370B6),
+              fillColor: const Color(0xFF2370B6),
               icon: Icon(
                 Icons.person,
                 color: FlutterFlowTheme.of(context).info,
@@ -70,27 +264,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               },
             ),
           ),
-          actions: [
-            Align(
-              alignment: AlignmentDirectional(0.47, -1.02),
-              child: FlutterFlowIconButton(
-                borderRadius: 8.0,
-                buttonSize: 48.0,
-                fillColor: Color(0xFF2370B6),
-                icon: Icon(
-                  Icons.menu,
-                  color: FlutterFlowTheme.of(context).info,
-                  size: 24.0,
-                ),
-                onPressed: () async {
-                  context.pushNamed(HomePage2Widget.routeName);
-                },
-              ),
-            ),
-          ],
+          actions: const [],
           flexibleSpace: FlexibleSpaceBar(
             title: Align(
-              alignment: AlignmentDirectional(0.0, 1.0),
+              alignment: const AlignmentDirectional(0.0, 1.0),
               child: Text(
                 'Mi seguridad UAMX',
                 textAlign: TextAlign.center,
@@ -101,7 +278,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                             .headlineLarge
                             .fontStyle,
                       ),
-                      color: Color(0xFFFFFCFC),
+                      color: const Color(0xFFFFFCFC),
                       fontSize: 24.0,
                       letterSpacing: 0.0,
                       fontWeight: FontWeight.bold,
@@ -117,549 +294,263 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Align(
-            alignment: AlignmentDirectional(0.0, -1.0),
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: SafeArea(
-                child: Container(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ── SOS Button ──────────────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: verticalPadding),
+                  child: Column(
+                    children: [
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          await actions.getlocation();
+                          try {
+                            await actions.sendWhatsappLocation();
+                          } catch (_) {}
+                          context.pushNamed(MapaUbicacionPageWidget.routeName);
+                        },
+                        child: Container(
+                          width: sosButtonSize,
+                          height: sosButtonSize,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                            'assets/images/SOS1.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Presiona para enviar alerta',
+                        textAlign: TextAlign.center,
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.inter(
+                                fontWeight: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              letterSpacing: 0.0,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ── Accesos Principales ──────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: verticalPadding, bottom: verticalPadding * 0.5),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Accesos Principales',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ),
+                ),
+                Container(
                   width: double.infinity,
-                  height: double.infinity,
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(0.0),
-                      bottomRight: Radius.circular(0.0),
-                      topLeft: Radius.circular(0.0),
-                      topRight: Radius.circular(0.0),
-                    ),
-                    shape: BoxShape.rectangle,
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 18.0,
+                        color: Color(0x33000000),
+                        offset: Offset(0.0, 6.0),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            'Accesos Rápidos',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  font: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
-                                  fontSize: 16.0,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FontWeight.w600,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .fontStyle,
-                                ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 150.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 18.0,
-                                    color: Color(0x33000000),
-                                    offset: Offset(
-                                      0.0,
-                                      6.0,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Wrap(
-                                    spacing: 10.0,
-                                    runSpacing: 10.0,
-                                    alignment: WrapAlignment.start,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.start,
-                                    direction: Axis.horizontal,
-                                    runAlignment: WrapAlignment.start,
-                                    verticalDirection: VerticalDirection.down,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Container(
-                                          width: 115.0,
-                                          height: 115.0,
-                                          decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              InkWell(
-                                                splashColor: Colors.transparent,
-                                                focusColor: Colors.transparent,
-                                                hoverColor: Colors.transparent,
-                                                highlightColor:
-                                                    Colors.transparent,
-                                                onTap: () async {
-                                                  context.pushNamed(
-                                                      ProteccionCivilWidget
-                                                          .routeName);
-                                                },
-                                                child: Container(
-                                                  width: 90.0,
-                                                  height: 90.0,
-                                                  clipBehavior: Clip.antiAlias,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Image.asset(
-                                                    'assets/images/proteccion_civil.png',
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                'Protección Civil',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Wrap(
-                                    spacing: 10.0,
-                                    runSpacing: 10.0,
-                                    alignment: WrapAlignment.start,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.start,
-                                    direction: Axis.horizontal,
-                                    runAlignment: WrapAlignment.start,
-                                    verticalDirection: VerticalDirection.down,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Container(
-                                          width: 115.0,
-                                          height: 115.0,
-                                          decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              InkWell(
-                                                splashColor: Colors.transparent,
-                                                focusColor: Colors.transparent,
-                                                hoverColor: Colors.transparent,
-                                                highlightColor:
-                                                    Colors.transparent,
-                                                onTap: () async {
-                                                  context.pushNamed(
-                                                      ServiciosMedicosWidget
-                                                          .routeName);
-                                                },
-                                                child: Container(
-                                                  width: 90.0,
-                                                  height: 90.0,
-                                                  clipBehavior: Clip.antiAlias,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Image.asset(
-                                                    'assets/images/servicios_medicos.png',
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                'Servicios Médicos',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          fontSize: 13.0,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding,
+                      horizontal: horizontalPadding * 0.5,
+                    ),
+                    child: Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      alignment: WrapAlignment.spaceEvenly,
+                      children: [
+                        _buildIconButton(
+                          context: context,
+                          containerSize: iconContainerSize,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/proteccion_civil.png',
+                          label: 'Protección Civil',
+                          imageFit: BoxFit.cover,
+                          onTap: () => context
+                              .pushNamed(ProteccionCivilWidget.routeName),
+                        ),
+                        _buildIconButton(
+                          context: context,
+                          containerSize: iconContainerSize,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/servicios_medicos.png',
+                          label: 'Servicios Médicos',
+                          imageFit: BoxFit.cover,
+                          onTap: () => context
+                              .pushNamed(ServiciosMedicosWidget.routeName),
+                        ),
+                        _buildIconButton(
+                          context: context,
+                          containerSize: iconContainerSize,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/upavig.png',
+                          label: 'UPAVIG',
+                          imageFit: BoxFit.contain,
+                          onTap: () =>
+                              context.pushNamed(UpavigWidget.routeName),
+                        ),
+                        _buildIconButton(
+                          context: context,
+                          containerSize: iconContainerSize,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/logoPROPESA.png',
+                          label: 'PROPRESA',
+                          imageFit: BoxFit.cover,
+                          onTap: () => context
+                              .pushNamed(PrevenciondesaludWidget.routeName),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ── Accesos Rápidos ──────────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: verticalPadding * 1.5,
+                      bottom: verticalPadding * 0.5),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Accesos Rápidos',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
                             ),
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 150.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                boxShadow: [
-                                  BoxShadow(
-                                    blurRadius: 18.0,
-                                    color: Color(0x33000000),
-                                    offset: Offset(
-                                      0.0,
-                                      6.0,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Wrap(
-                                    spacing: 10.0,
-                                    runSpacing: 10.0,
-                                    alignment: WrapAlignment.start,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.start,
-                                    direction: Axis.horizontal,
-                                    runAlignment: WrapAlignment.start,
-                                    verticalDirection: VerticalDirection.down,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Container(
-                                          width: 115.0,
-                                          height: 115.0,
-                                          decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              InkWell(
-                                                splashColor: Colors.transparent,
-                                                focusColor: Colors.transparent,
-                                                hoverColor: Colors.transparent,
-                                                highlightColor:
-                                                    Colors.transparent,
-                                                onTap: () async {
-                                                  context.pushNamed(
-                                                      UpavigWidget.routeName);
-                                                },
-                                                child: Container(
-                                                  width: 90.0,
-                                                  height: 90.0,
-                                                  clipBehavior: Clip.antiAlias,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Image.asset(
-                                                    'assets/images/upavig.png',
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                'UPAVIG',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Wrap(
-                                    spacing: 10.0,
-                                    runSpacing: 10.0,
-                                    alignment: WrapAlignment.start,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.start,
-                                    direction: Axis.horizontal,
-                                    runAlignment: WrapAlignment.start,
-                                    verticalDirection: VerticalDirection.down,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Container(
-                                          width: 115.0,
-                                          height: 115.0,
-                                          decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              InkWell(
-                                                splashColor: Colors.transparent,
-                                                focusColor: Colors.transparent,
-                                                hoverColor: Colors.transparent,
-                                                highlightColor:
-                                                    Colors.transparent,
-                                                onTap: () async {
-                                                  context.pushNamed(
-                                                      PrevenciondesaludWidget
-                                                          .routeName);
-                                                },
-                                                child: Container(
-                                                  width: 90.0,
-                                                  height: 90.0,
-                                                  clipBehavior: Clip.antiAlias,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Image.asset(
-                                                    'assets/images/logoPROPESA.png',
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                'PROPESA',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          fontSize: 13.0,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SafeArea(
-                            child: Container(
-                              width: 300.6,
-                              height: 266.67,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                shape: BoxShape.rectangle,
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    splashColor: Colors.transparent,
-                                    focusColor: Colors.transparent,
-                                    hoverColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () async {
-                                      await actions.getlocation();
-                                      try {
-                                        await actions.sendWhatsappLocation();
-                                      } catch (_) {}
-                                      context.pushNamed(
-                                          MapaUbicacionPageWidget.routeName);
-                                    },
-                                    child: Container(
-                                      width: 200.0,
-                                      height: 200.0,
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/SOS1.png',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    'Presiona para enviar alerta',
-                                    textAlign: TextAlign.center,
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          font: GoogleFonts.inter(
-                                            fontWeight:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontWeight,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
-                                          ),
-                                          letterSpacing: 0.0,
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 322.71,
-                            height: 100.0,
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.asset(
-                                'assets/images/variacion5Xoc.png',
-                                width: 10.0,
-                                height: 10.0,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 18.0,
+                        color: Color(0x33000000),
+                        offset: Offset(0.0, 6.0),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding,
+                      horizontal: horizontalPadding * 0.5,
+                    ),
+                    child: Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      alignment: WrapAlignment.spaceEvenly,
+                      children: [
+                        _buildQuickAccessButton(
+                          context: context,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/uber.webp',
+                          label: 'Uber',
+                          imageFit: BoxFit.cover,
+                          onTap: () => launchURL(
+                              'https://www.uber.com/global/es/sign-in/'),
+                        ),
+                        _buildQuickAccessButton(
+                          context: context,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/didi_logo.png',
+                          label: 'DiDi',
+                          imageFit: BoxFit.cover,
+                          onTap: () => launchURL(
+                              'https://web.didiglobal.com/mx/pasajero/'),
+                        ),
+                        _buildQuickAccessButton(
+                          context: context,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/Socorrobot.png',
+                          label: 'SocorroBot',
+                          imageFit: BoxFit.contain,
+                          onTap: () => launchURL(
+                              'https://api.whatsapp.com/send/?phone=5215592252174&text&type=phone_number&app_absent=0'),
+                        ),
+                        _buildQuickAccessButton(
+                          context: context,
+                          imageSize: iconImageSize,
+                          assetPath: 'assets/images/mapa_download.png',
+                          label: 'Mapa',
+                          imageFit: BoxFit.cover,
+                          onTap: () =>
+                              context.pushNamed(MapaBotonesWidget.routeName),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ── Logo UAM ─────────────────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: verticalPadding),
+                  child: Container(
+                    width: double.infinity,
+                    height: (screenHeight * 0.10).clamp(70.0, 110.0),
+                    decoration: BoxDecoration(
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.asset(
+                        'assets/images/variacion5Xoc.png',
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

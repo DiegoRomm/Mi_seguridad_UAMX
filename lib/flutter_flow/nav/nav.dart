@@ -134,6 +134,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => CrearCuentaWidget(),
         ),
         FFRoute(
+          name: AvisoPrivacidadWidget.routeName,
+          path: AvisoPrivacidadWidget.routePath,
+          builder: (context, params) => AvisoPrivacidadWidget(),
+        ),
+        FFRoute(
           name: MapaUbicacionPageWidget.routeName,
           path: MapaUbicacionPageWidget.routePath,
           builder: (context, params) => MapaUbicacionPageWidget(),

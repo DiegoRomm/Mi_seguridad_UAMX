@@ -20,7 +20,7 @@ Future<void> sendWhatsappLocation() async {
   final lat = location.latitude;
   final lng = location.longitude;
   final mensaje = '¡Ayuda! Estoy aquí: https://www.google.com/maps?q=$lat,$lng';
-  final numero = '525959517178';
+  final numero = '525574326309';
   final texto = Uri.encodeComponent(mensaje);
 
   // Intentar primero con esquema nativo whatsapp://

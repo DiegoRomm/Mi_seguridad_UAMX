@@ -490,7 +490,7 @@ class _LogInWidgetState extends State<LogInWidget> {
                             highlightColor: Colors.transparent,
                             onTap: () async {
                               context.pushNamed(
-                                CrearCuentaWidget.routeName,
+                                AvisoPrivacidadWidget.routeName,
                                 extra: <String, dynamic>{
                                   '__transition_info__': TransitionInfo(
                                     hasTransition: true,
