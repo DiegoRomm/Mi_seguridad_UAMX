@@ -1,5 +1,6 @@
 # Uncomment this line to define a global platform for your project
 platform :ios, '14.0.0'
+ENV['SWIFT_PACKAGE_MANAGER_INTEGRATION'] = '0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -32,6 +33,7 @@ target 'Runner' do
   use_frameworks! :linkage => :static
   use_modular_headers!
 
+  pod 'FirebaseCoreInternal', :modular_headers => true
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   # Usar versión de CocoaPods en lugar de Git para mejor rendimiento
   # pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '11.13.0'
@@ -55,9 +57,12 @@ post_install do |installer|
   end
 
   installer.pods_project.targets.each do |target|
+    next unless ['FirebaseCoreInternal', 'FirebaseCore', 'FirebaseAppCheckInterop'].include?(target.name)
     target.build_phases.each do |phase|
-      if phase.respond_to?(:name) && phase.name == 'Extract App Intents Metadata'
-        phase.shell_script = 'echo "skipped"'
+      if phase.respond_to?(:name) && phase.name&.include?('App Intents')
+        phase.shell_script = 'echo skipped'
+        phase.input_paths = []
+        phase.output_paths = []
       end
     end
   end
