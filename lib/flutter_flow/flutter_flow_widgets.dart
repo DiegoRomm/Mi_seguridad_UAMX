@@ -407,4 +407,3 @@ class _FFFocusIndicatorState extends State<FFFocusIndicator> {
     );
   }
 }
-
