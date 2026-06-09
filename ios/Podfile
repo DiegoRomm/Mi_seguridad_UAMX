@@ -57,7 +57,6 @@ post_install do |installer|
   end
 
   installer.pods_project.targets.each do |target|
-    next unless ['FirebaseCoreInternal', 'FirebaseCore', 'FirebaseAppCheckInterop'].include?(target.name)
     target.build_phases.each do |phase|
       if phase.respond_to?(:name) && phase.name&.include?('App Intents')
         phase.shell_script = 'echo skipped'
@@ -73,3 +72,10 @@ target 'ImageNotification' do
   pod 'Firebase/Messaging'
   pod 'GoogleUtilities'
 end
+
+
+
+
+
+
+
