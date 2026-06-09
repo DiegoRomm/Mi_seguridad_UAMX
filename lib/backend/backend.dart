@@ -330,7 +330,30 @@ Future maybeCreateUser(User user) async {
   currentUserDocument = UsersRecord.getDocumentFromData(userData, userRecord);
 }
 
-Future updateUserDocument({String? email}) async {
-  await currentUserDocument?.reference
-      .update(createUsersRecordData(email: email));
+Future updateUserDocument({
+  String? email,
+  String? displayName,
+  String? phoneNumber,
+  String? photoUrl,
+  String? contactoEmergenciaTelefono,
+  String? tipoSangre,
+  String? alergias,
+  String? padecimientos,
+  String? medicamentos,
+}) async {
+  final ref = currentUserDocument?.reference ?? currentUserReference;
+  if (ref == null) return;
+  await ref.update(
+    createUsersRecordData(
+      email: email,
+      displayName: displayName,
+      phoneNumber: phoneNumber,
+      photoUrl: photoUrl,
+      contactoEmergenciaTelefono: contactoEmergenciaTelefono,
+      tipoSangre: tipoSangre,
+      alergias: alergias,
+      padecimientos: padecimientos,
+      medicamentos: medicamentos,
+    ),
+  );
 }

@@ -47,6 +47,18 @@ class _LogInWidgetState extends State<LogInWidget> {
     super.dispose();
   }
 
+  void _mostrarError(BuildContext context, String mensaje) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensaje),
+        backgroundColor: Colors.red.shade700,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -397,21 +409,41 @@ class _LogInWidgetState extends State<LogInWidget> {
                                 ),
                                 FFButtonWidget(
                                   onPressed: () async {
-                                    GoRouter.of(context).prepareAuthEvent();
+                                    // Validaciones básicas antes de llamar a Firebase
+                                    final correo = _model
+                                        .correoTextController.text
+                                        .trim();
+                                    final contrasena = _model
+                                        .contrasenaTextController.text;
 
-                                    final user =
-                                        await authManager.signInWithEmail(
-                                      context,
-                                      _model.correoTextController.text,
-                                      _model.contrasenaTextController.text,
-                                    );
-                                    if (user == null) {
+                                    if (correo.isEmpty || contrasena.isEmpty) {
+                                      _mostrarError(context,
+                                          'Por favor ingresa tu correo y contraseña.');
                                       return;
                                     }
 
-                                    context.goNamedAuth(
-                                        HomePageWidget.routeName,
-                                        context.mounted);
+                                    GoRouter.of(context).prepareAuthEvent();
+
+                                    try {
+                                      final user =
+                                          await authManager.signInWithEmail(
+                                        context,
+                                        correo,
+                                        contrasena,
+                                      );
+                                      if (user == null) {
+                                        // FirebaseAuthManager ya muestra SnackBar con el error.
+                                        return;
+                                      }
+                                      context.goNamedAuth(
+                                          HomePageWidget.routeName,
+                                          context.mounted);
+                                    } catch (_) {
+                                      _mostrarError(
+                                          context,
+                                          'Ocurrió un error inesperado. '
+                                          'Verifique su conexión a Internet e inténtelo de nuevo.');
+                                    }
                                   },
                                   text: 'Iniciar Sesión',
                                   options: FFButtonOptions(

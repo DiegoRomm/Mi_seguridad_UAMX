@@ -443,7 +443,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   ),
                 ),
 
-                // ── Accesos Rápidos ──────────────────────────────────────
+                // ── Mapa del campus ───────────────────────────────────────
                 Padding(
                   padding: EdgeInsets.only(
                       top: verticalPadding * 1.5,
@@ -451,7 +451,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Accesos Rápidos',
+                      'Mapa del campus',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             font: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
@@ -484,48 +484,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       vertical: verticalPadding,
                       horizontal: horizontalPadding * 0.5,
                     ),
-                    child: Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      alignment: WrapAlignment.spaceEvenly,
-                      children: [
-                        _buildQuickAccessButton(
-                          context: context,
-                          imageSize: iconImageSize,
-                          assetPath: 'assets/images/uber.webp',
-                          label: 'Uber',
-                          imageFit: BoxFit.cover,
-                          onTap: () => launchURL(
-                              'https://www.uber.com/global/es/sign-in/'),
-                        ),
-                        _buildQuickAccessButton(
-                          context: context,
-                          imageSize: iconImageSize,
-                          assetPath: 'assets/images/didi_logo.png',
-                          label: 'DiDi',
-                          imageFit: BoxFit.cover,
-                          onTap: () => launchURL(
-                              'https://web.didiglobal.com/mx/pasajero/'),
-                        ),
-                        _buildQuickAccessButton(
-                          context: context,
-                          imageSize: iconImageSize,
-                          assetPath: 'assets/images/Socorrobot.png',
-                          label: 'SocorroBot',
-                          imageFit: BoxFit.contain,
-                          onTap: () => launchURL(
-                              'https://api.whatsapp.com/send/?phone=5215592252174&text&type=phone_number&app_absent=0'),
-                        ),
-                        _buildQuickAccessButton(
-                          context: context,
-                          imageSize: iconImageSize,
-                          assetPath: 'assets/images/mapa_download.png',
-                          label: 'Mapa',
-                          imageFit: BoxFit.cover,
-                          onTap: () =>
-                              context.pushNamed(MapaBotonesWidget.routeName),
-                        ),
-                      ],
+                    child: Center(
+                      child: _buildQuickAccessButton(
+                        context: context,
+                        imageSize: iconImageSize,
+                        assetPath: 'assets/images/mapa_download.png',
+                        label: 'Mapa de botones de pánico',
+                        imageFit: BoxFit.cover,
+                        onTap: () =>
+                            context.pushNamed(MapaBotonesWidget.routeName),
+                      ),
                     ),
                   ),
                 ),

@@ -8,7 +8,7 @@ workflows:
       xcode: latest
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.mycompany.miseguridaduamx
+        bundle_identifier: mx.uamx.miseguridad
 
     scripts:
       - name: Get Flutter packages
