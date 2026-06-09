@@ -441,10 +441,10 @@ packages:
     dependency: "direct main"
     description:
       name: font_awesome_flutter
-      sha256: "275ff26905134bcb59417cf60ad979136f1f8257f2f449914b2c3e05bbb4cd6f"
+      sha256: "a3d32f24f25e1462ccdf1e0b98e05bef2f9f14fe5e5a9e31df6b96cbfd7a35dd"
       url: "https://pub.dev"
     source: hosted
-    version: "10.7.0"
+    version: "11.0.0"
   from_css_color:
     dependency: "direct main"
     description:
@@ -1261,3 +1261,4 @@ packages:
 sdks:
   dart: ">=3.9.0 <4.0.0"
   flutter: ">=3.35.0"
+
