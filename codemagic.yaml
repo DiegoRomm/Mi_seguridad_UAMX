@@ -5,7 +5,7 @@ workflows:
 
     environment:
       flutter: stable
-      xcode: latest
+      xcode: 16.4
       ios_signing:
         distribution_type: app_store
         bundle_identifier: mx.uamx.miseguridad
