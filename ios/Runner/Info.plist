@@ -54,6 +54,10 @@
 	<true/>
 
 
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Acceso a ubicacion para medidas de proteccion</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+    <string>Acceso a ubicacion para medidas de proteccion</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>Acceso a ubicacion</string>
 	<key>NSCameraUsageDescription</key>
@@ -94,3 +98,4 @@
 
 </dict>
 </plist>
+
